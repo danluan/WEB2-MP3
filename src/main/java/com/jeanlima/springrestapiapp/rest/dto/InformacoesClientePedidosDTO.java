@@ -5,11 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ItemPedidoDTO {
-    private Integer produto;
-    private Integer quantidade;
+public class InformacoesClientePedidosDTO {
+    private Integer id;
+    private String cpf;
+    private String nome;
+    private List<PedidoDTO> pedidos;
 }

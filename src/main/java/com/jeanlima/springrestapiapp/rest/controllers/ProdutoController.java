@@ -9,12 +9,14 @@ import java.util.Map;
 import java.lang.reflect.Field;
 
 
+import com.jeanlima.springrestapiapp.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.util.ReflectionUtils;
 
 import com.jeanlima.springrestapiapp.model.Produto;
 import com.jeanlima.springrestapiapp.repository.ProdutoRepository;
@@ -56,30 +58,10 @@ public class ProdutoController {
         Produto produto = repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto não encontrado."));
 
-        updates.forEach((key, value) -> updateField(produto, key, value));
+        updates.forEach((key, value) -> Util.updateField(produto, key, value));
 
         repository.save(produto);
     }
-
-    private void updateField(Produto produto, String fieldName, Object value) {
-        Field field;
-        try {
-            field = Produto.class.getDeclaredField(fieldName);
-            field.setAccessible(true);
-            if (field.get(produto) != value){
-                if (field.getType() == Double.class){
-                    field.set(produto, (BigDecimal) value);
-                }
-                field.set(produto, value);
-            }
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException("Field " + fieldName + " not found on Produto.");
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("Field " + fieldName + " not accessible on Produto.");
-        }
-
-    }
-
 
     @DeleteMapping("{id}")
     @ResponseStatus(NO_CONTENT)

@@ -53,6 +53,16 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.setItens(itemsPedido);
         return pedido;
     }
+
+    @Override
+    public void deletar(Integer id) {
+        repository.findById(id)
+                .map( pedido -> {
+                    repository.delete(pedido);
+                    return pedido;
+                }).orElseThrow(() -> new RuntimeException("Pedido não encontrado."));
+    }
+
     private List<ItemPedido> converterItems(Pedido pedido, List<ItemPedidoDTO> items){
         if(items.isEmpty()){
             throw new RegraNegocioException("Não é possível realizar um pedido sem items.");
@@ -89,6 +99,11 @@ public class PedidoServiceImpl implements PedidoService {
             pedido.setStatus(statusPedido);
             return repository.save(pedido);
         }).orElseThrow(() -> new PedidoNaoEncontradoException() );
+    }
+
+    @Override
+    public List<Pedido> obterPedidosPorCliente(Cliente cliente) {
+        return repository.findByCliente(cliente);
     }
     
     

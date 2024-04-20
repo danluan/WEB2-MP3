@@ -17,7 +17,7 @@ public class ItemPedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType)
     @JoinColumn(name = "pedido_id")
     private Pedido pedido;
 

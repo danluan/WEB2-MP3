@@ -1,6 +1,13 @@
 package com.jeanlima.springrestapiapp.rest.controllers;
 
 import java.util.List;
+
+import com.jeanlima.springrestapiapp.model.ItemPedido;
+import com.jeanlima.springrestapiapp.model.Pedido;
+import com.jeanlima.springrestapiapp.rest.dto.InformacoesClientePedidosDTO;
+import com.jeanlima.springrestapiapp.rest.dto.ItemPedidoDTO;
+import com.jeanlima.springrestapiapp.rest.dto.PedidoDTO;
+import com.jeanlima.springrestapiapp.service.PedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -19,6 +26,9 @@ public class ClienteController {
 
     @Autowired
     private ClienteRepository clientes;
+
+    @Autowired
+    private PedidoService pedidoService;
 
     @GetMapping("{id}")
     public Cliente getClienteById( @PathVariable Integer id ){
@@ -90,6 +100,40 @@ public class ClienteController {
 
         Example example = Example.of(filtro, matcher);
         return clientes.findAll(example);
+    }
+
+    @GetMapping("detalhes/{id}")
+    public InformacoesClientePedidosDTO getInformacoesClientePedidos(@PathVariable Integer id){
+        Cliente cliente = clientes.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Cliente não encontrado"));
+
+        List<Pedido> pedidos = pedidoService.obterPedidosPorCliente(cliente);
+
+        return InformacoesClientePedidosDTO
+                .builder()
+                .id(cliente.getId())
+                .nome(cliente.getNome())
+                .cpf(cliente.getCpf())
+                .pedidos(
+                        pedidos
+                                .stream()
+                                .map( pedido -> {
+                                    return PedidoDTO.builder()
+                                            .cliente(cliente.getId())
+                                            .total(pedido.getTotal())
+                                            .items(pedido.getItens()
+                                                    .stream()
+                                                    .map(item -> {
+                                                        return ItemPedidoDTO
+                                                                .builder()
+                                                                .produto(item.getProduto().getId())
+                                                                .quantidade(item.getQuantidade())
+                                                                .build();
+                                                    }).toList())
+                                            .build();
+                                }).toList())
+                .build();
     }
 
 }
