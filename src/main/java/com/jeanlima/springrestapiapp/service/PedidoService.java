@@ -12,7 +12,7 @@ import com.jeanlima.springrestapiapp.rest.dto.PedidoDTO;
 
 public interface PedidoService {
     Pedido salvar( PedidoDTO dto );
-    void deletar(Integer id);
+    boolean deletar(Integer id);
     Optional<Pedido> obterPedidoCompleto(Integer id);
     void atualizaStatus(Integer id, StatusPedido statusPedido);
     List<Pedido> obterPedidosPorCliente(Cliente cliente);

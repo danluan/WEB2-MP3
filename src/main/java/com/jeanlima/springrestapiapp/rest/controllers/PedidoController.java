@@ -47,7 +47,11 @@ public class PedidoController {
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete( @PathVariable Integer id ){
-        service.deletar(id);
+        if(service.deletar(id)){
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Pedido deletado com sucesso.");
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido não encontrado");
+
     }
 
 

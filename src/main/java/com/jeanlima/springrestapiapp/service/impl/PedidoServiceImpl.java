@@ -55,12 +55,12 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     @Override
-    public void deletar(Integer id) {
-        repository.findById(id)
-                .map( pedido -> {
-                    repository.delete(pedido);
-                    return pedido;
-                }).orElseThrow(() -> new RuntimeException("Pedido não encontrado."));
+    public boolean deletar(Integer id) {
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 
     private List<ItemPedido> converterItems(Pedido pedido, List<ItemPedidoDTO> items){
