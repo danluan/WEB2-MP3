@@ -54,6 +54,12 @@ public class PedidoController {
 
     }
 
+    @PutMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void update(@PathVariable Integer id, @RequestBody PedidoDTO dto){
+        service.atualizar(id, dto);
+    }
+
 
     private InformacoesPedidoDTO converter(Pedido pedido){
         return InformacoesPedidoDTO

@@ -7,9 +7,13 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.lang.reflect.Field;
+import java.util.stream.Collectors;
 
 
 import com.jeanlima.springrestapiapp.Util;
+import com.jeanlima.springrestapiapp.rest.dto.EstoqueDTO;
+import com.jeanlima.springrestapiapp.rest.dto.PedidoDTO;
+import com.jeanlima.springrestapiapp.rest.dto.ProdutoDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -77,24 +81,43 @@ public class ProdutoController {
     }
 
     @GetMapping("{id}")
-    public Produto getById(@PathVariable Integer id){
-        return repository
+    public ProdutoDTO getById(@PathVariable Integer id){
+        Produto produto = repository
                 .findById(id)
                 .orElseThrow( () ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Produto não encontrado."));
+
+        return criarProdutoDTO(produto);
     }
 
 
     @GetMapping
-    public List<Produto> find(Produto filtro ){
+    public List<ProdutoDTO> find(Produto filtro){
         ExampleMatcher matcher = ExampleMatcher
                 .matching()
                 .withIgnoreCase()
-                .withStringMatcher(
-                        ExampleMatcher.StringMatcher.CONTAINING );
-
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
         Example example = Example.of(filtro, matcher);
-        return repository.findAll(example);
+        List<Produto> produtos = repository.findAll(example);
+        return produtos.stream()
+                .map(this::criarProdutoDTO)
+                .collect(Collectors.toList());
+    }
+
+    private ProdutoDTO criarProdutoDTO(Produto produto) {
+        EstoqueDTO estoqueDTO = null;
+        if (produto.getEstoque() != null) {
+            estoqueDTO = EstoqueDTO.builder()
+                    .id(produto.getEstoque().getId())
+                    .quantidade(produto.getEstoque().getQuantidade())
+                    .build();
+        }
+        return ProdutoDTO.builder()
+                .id(produto.getId())
+                .descricao(produto.getDescricao())
+                .preco(produto.getPreco())
+                .estoque(estoqueDTO)
+                .build();
     }
 }

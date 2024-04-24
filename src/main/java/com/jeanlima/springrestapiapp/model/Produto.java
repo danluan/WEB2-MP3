@@ -23,6 +23,12 @@ public class Produto {
     @OneToOne(mappedBy = "produto", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Estoque estoque;
 
+    public Produto() {
+    }
+    public Produto(String descricao, BigDecimal preco) {
+        this.descricao = descricao;
+        this.preco = preco;
+    }
     public Integer getId() {
         return id;
     }
@@ -41,11 +47,11 @@ public class Produto {
     public void setPreco(BigDecimal preco) {
         this.preco = preco;
     }
-    public Produto() {
+    public Estoque getEstoque() {
+        return estoque;
     }
-    public Produto(String descricao, BigDecimal preco) {
-        this.descricao = descricao;
-        this.preco = preco;
+    public void setEstoque(Estoque estoque) {
+        this.estoque = estoque;
     }
     @Override
     public int hashCode() {

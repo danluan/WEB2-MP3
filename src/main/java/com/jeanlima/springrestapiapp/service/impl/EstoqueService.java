@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -49,6 +50,38 @@ public class EstoqueService {
                                                     "Produto não encontrado.")));
                     return estoqueRepository.save(estoque);
                 }).orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Estoque não encontrado."));
+    }
+
+    public boolean produtoTemEstoque(Integer idProduto) {
+        Produto produto = produtoRepository.findById(idProduto)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto não encontrado."));
+
+        if(produto.getEstoque() != null) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean deletar(Integer id) {
+        if (estoqueRepository.existsById(id)) {
+            estoqueRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+
+    public Estoque updateFields(Integer id, Map<String, Object> updates) {
+        Estoque estoque = estoqueRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Estoque não encontrado."));
+
+        updates.forEach((key, value) -> {
+            if (key.equals("quantidade")) {
+                estoque.setQuantidade((Integer) value);
+            }
+        });
+
+        estoqueRepository.save(estoque);
+        return estoque;
     }
 
 
