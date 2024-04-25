@@ -28,6 +28,7 @@ public class PedidoServiceImpl implements PedidoService {
     private final ProdutoRepository produtosRepository;
     private final ItemPedidoRepository itemsPedidoRepository;
     private final EstoqueRepository estoqueRepository;
+    private final PedidoRepository pedidoRepository;
 
     @Override
     @Transactional
@@ -133,6 +134,32 @@ public class PedidoServiceImpl implements PedidoService {
     @Override
     public void atualizar(Integer id, PedidoDTO dto) {
 
+    }
+
+    @Override
+    public PedidoDTO atualizarCliente(Integer idPedido, Integer idCliente) {
+        Pedido pedido = pedidoRepository.findById(idPedido)
+                .orElseThrow(PedidoNaoEncontradoException::new);
+
+        Cliente cliente = clientesRepository.findById(idCliente)
+                .orElseThrow(() -> new RegraNegocioException("Código de cliente inválido."));
+
+        pedido.setCliente(cliente);
+
+        pedidoRepository.save(pedido);
+
+        return PedidoDTO.builder()
+                .cliente(cliente.getId())
+                .total(pedido.getTotal())
+                .items(
+                        pedido.getItens()
+                                .stream()
+                                .map(item -> ItemPedidoDTO.builder()
+                                        .produto(item.getProduto().getId())
+                                        .quantidade(item.getQuantidade())
+                                        .build()
+                                ).collect(Collectors.toList())
+                ).build();
     }
 
 

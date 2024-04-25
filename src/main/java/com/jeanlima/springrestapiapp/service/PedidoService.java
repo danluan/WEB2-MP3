@@ -17,4 +17,5 @@ public interface PedidoService {
     void atualizaStatus(Integer id, StatusPedido statusPedido);
     List<Pedido> obterPedidosPorCliente(Cliente cliente);
     void atualizar(Integer id, PedidoDTO dto);
+    PedidoDTO atualizarCliente(Integer idPedido, Integer idCliente);
 }

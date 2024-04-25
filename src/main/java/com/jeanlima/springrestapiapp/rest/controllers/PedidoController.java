@@ -54,6 +54,14 @@ public class PedidoController {
 
     }
 
+    //endpoint para atualizar o cliente do pedido
+    @PatchMapping("/{idPedido}/cliente")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateCliente(@PathVariable Integer idPedido, @RequestBody Integer idCliente){
+        service.atualizarCliente(idPedido, idCliente);
+    }
+
+
     @PutMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@PathVariable Integer id, @RequestBody PedidoDTO dto){
