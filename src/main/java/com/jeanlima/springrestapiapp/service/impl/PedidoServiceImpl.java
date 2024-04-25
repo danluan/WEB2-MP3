@@ -132,8 +132,14 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     @Override
-    public void atualizar(Integer id, PedidoDTO dto) {
+    public void atualizar(Integer id,  PedidoDTO dto) {
+        Pedido pedido = repository.findById(id)
+                .orElseThrow(PedidoNaoEncontradoException::new);
 
+        pedido.setTotal(dto.getTotal());
+        pedido.setItens(converterItems(pedido, dto.getItems()));
+
+        repository.save(pedido);
     }
 
     @Override

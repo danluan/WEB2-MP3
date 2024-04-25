@@ -54,13 +54,11 @@ public class PedidoController {
 
     }
 
-    //endpoint para atualizar o cliente do pedido
     @PatchMapping("/{idPedido}/cliente")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateCliente(@PathVariable Integer idPedido, @RequestBody Integer idCliente){
         service.atualizarCliente(idPedido, idCliente);
     }
-
 
     @PutMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -96,7 +94,7 @@ public class PedidoController {
         ).collect(Collectors.toList());
     }
 
-     @PatchMapping("{id}")
+    @PatchMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateStatus(@PathVariable Integer id ,
                              @RequestBody AtualizacaoStatusPedidoDTO dto){
